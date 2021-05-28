@@ -15,12 +15,16 @@ $sp = new \ServiceProvider();
 $sp->register(\Application\SignInCommand::class);
 $sp->register(\Application\SignedInUserQuery::class);
 $sp->register(\Application\SignOutCommand::class);
+$sp->register(\Application\ProductsQuery::class);
 
 $sp->register(\Application\Services\AuthenticationService::class);
 
 // Infrastructure
 $sp->register(\Infrastructure\FakeRepository::class, isSingleton: true);
 $sp->register(\Application\Interfaces\UserRepository::class, \Infrastructure\FakeRepository::class);
+$sp->register(\Application\Interfaces\ProductRepository::class, \Infrastructure\FakeRepository::class);
+$sp->register(\Application\Interfaces\RatingRepository::class, \Infrastructure\FakeRepository::class);
+
 /*
 $sp->register(\Application\Interfaces\Repository::class, function() {
     return new Repository('localhost', 'root', '', 'bookshop');
@@ -38,5 +42,6 @@ $sp->register(\Presentation\MVC\MVC::class, function () {
 
 $sp->register(\Presentation\Controllers\Home::class);
 $sp->register(\Presentation\Controllers\User::class);
+$sp->register(\Presentation\Controllers\Product::class);
 
 $sp->resolve(\Presentation\MVC\MVC::class)->handleRequest($sp);

@@ -18,6 +18,8 @@
             <div class="collapse navbar-collapse" id="navbar">
                 <nav class="navbar-nav me-auto">
                     <?php $link('Home', 'Home', 'Index', cssClass: 'nav-link'); ?>
+                    <?php $link('Overview', 'Product', 'Index', cssClass: 'nav-link'); ?>
+
                 </nav>
                 <?php $render('partial/user', $data['user']); ?>
             </div>
