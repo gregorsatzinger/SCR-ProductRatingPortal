@@ -133,6 +133,64 @@ class Repository implements
     }
     public function getRatingsForProduct(int $productId): array
     {
-        return [];
+        $ratings = [];
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'SELECT ratings.id, creatorId, username, productId, name, creationDate, rating, comment
+             FROM ratings   JOIN users ON (users.id = products.creatorId)
+                            JOIN products ON (products.id = ratings.productId)
+             WHERE productId = ?',
+            function ($s) use ($productId) {
+                $s->bind_param('i', $productId);
+            }
+        );
+        $stat->bind_result($id, $creatorId, $username, $productId, $name, $creationDate, $rating, $comment);
+        while ($stat->fetch()) {
+            $ratings[] = new \Application\Entities\Rating($id, $creatorId, $username, $productId, $name, $creationDate, $rating, $comment);
+        }
+        $stat->close();
+        $con->close();
+        return $ratings;
     }
+    public function getAvgRatingForProduct(int $productId): float {
+        $ratingsAvg = 0;
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'SELECT AVG(rating) AS avg
+             FROM ratings
+             WHERE productId = ?',
+            function ($s) use ($productId) {
+                $s->bind_param('i', $productId);
+            }
+        );
+        $stat->bind_result($ratingsAvg);
+        $stat->fetch();
+
+
+        $stat->close();
+        $con->close();
+        return $ratingsAvg ?? 0;
+    }
+    public function getCountOfRatingsForProduct(int $productId): int {
+        $ratingsCount = 0;
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'SELECT COUNT(*) AS cnt
+             FROM ratings
+             WHERE productId = ?',
+            function ($s) use ($productId) {
+                $s->bind_param('i', $productId);
+            }
+        );
+        $stat->bind_result($ratingsCount);
+        $stat->fetch();
+
+        $stat->close();
+        $con->close();
+        return $ratingsCount;
+    }
+
 }

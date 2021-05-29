@@ -1,21 +1,25 @@
 <?php if ($data['products'] !== null) { ?>
     <?php if (sizeof($data['products']) > 0) { ?>
-        <table class="table">
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
                     <th>Producer</th>
                     <th>Creator</th>
+                    <th>Rating</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($data['products'] as $product) { ?>
                     <tr>
                         <td><?php $htmlOut($product->getId()); ?></td>
-                        <td><?php $htmlOut($product->getName()); ?></td>
+                        <td>
+                            <?php $link($product->getName(), 'Home', 'Index', cssClass: 'nav-link'); ?>
+                        </td>
                         <td><?php $htmlOut($product->getProducer()); ?></td>
                         <td><?php $htmlOut($product->getCreatorName()); ?></td>
+                        <td><?php $htmlOut($product->getAvgRating()); ?> <i>( <?php $htmlOut($product->getRatingCount()); ?> Ratings)</i></td>
                     </tr>
                 <?php } ?>
             </tbody>

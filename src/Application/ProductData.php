@@ -9,6 +9,8 @@ class ProductData
         private string $name,
         private string $producer,
         private string $creatorName,
+        private int $ratingCount,
+        private float $avgRating
     ) {
     }
     public function getId(): int
@@ -26,5 +28,13 @@ class ProductData
     public function getCreatorName(): string
     {
         return $this->creatorName;
+    }
+    public function getRatingCount(): int
+    {
+        return $this->ratingCount;
+    }
+    public function getAvgRating(): float
+    {
+        return $this->avgRating;
     }
 }

@@ -7,7 +7,9 @@ class Rating
     public function __construct(
         private int $id,
         private int $creatorId,
+        private string $creatorName,
         private int $productId,
+        private string $productName,
         private string $date,
         private int $rating,
         private string $comment
@@ -36,5 +38,13 @@ class Rating
     public function getComment(): string
     {
         return $this->comment;
+    }
+    public function getCreatorName(): string
+    {
+        return $this->creatorName;
+    }
+    public function getProductName(): string
+    {
+        return $this->productName;
     }
 }
