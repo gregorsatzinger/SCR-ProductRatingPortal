@@ -1,5 +1,5 @@
 </div>
-    <footer class="bg-light mt-3">
+    <footer class="bg-dark mt-3 fixed-bottom">
       <div class="container">
         <p class="text-muted p-0"><?php $htmlOut(strftime('%c')); ?></p>
       </div>

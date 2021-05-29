@@ -15,7 +15,9 @@
                     <tr>
                         <td><?php $htmlOut($product->getId()); ?></td>
                         <td>
-                            <?php $link($product->getName(), 'Home', 'Index', cssClass: 'nav-link'); ?>
+                            <?php $beginForm('Rating', 'Index', ['p' => $product->getId()], 'get', 'form-inline'); ?>
+                            <button class="button-link"><?php $htmlOut($product->getName()); ?></button>
+                            <?php $endForm(); ?>
                         </td>
                         <td><?php $htmlOut($product->getProducer()); ?></td>
                         <td><?php $htmlOut($product->getCreatorName()); ?></td>

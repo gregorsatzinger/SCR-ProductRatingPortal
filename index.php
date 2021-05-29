@@ -12,11 +12,13 @@ spl_autoload_register(function ($class) {
 
 $sp = new \ServiceProvider();
 // Application
+$sp->register(\Application\RatingsQuery::class);
 $sp->register(\Application\RegisterCommand::class);
 $sp->register(\Application\SignInCommand::class);
 $sp->register(\Application\SignedInUserQuery::class);
 $sp->register(\Application\SignOutCommand::class);
 $sp->register(\Application\ProductsQuery::class);
+$sp->register(\Application\ProductQuery::class);
 
 $sp->register(\Application\Services\AuthenticationService::class);
 
@@ -48,6 +50,7 @@ $sp->register(\Presentation\MVC\MVC::class, function () {
 
 $sp->register(\Presentation\Controllers\Home::class);
 $sp->register(\Presentation\Controllers\User::class);
+$sp->register(\Presentation\Controllers\Rating::class);
 $sp->register(\Presentation\Controllers\Product::class);
 
 $sp->resolve(\Presentation\MVC\MVC::class)->handleRequest($sp);

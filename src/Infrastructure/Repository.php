@@ -131,16 +131,37 @@ class Repository implements
         $con->close();
         return $products;
     }
+    public function getProductById(int $productId): ?\Application\Entities\Product {
+        $product = null;
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'SELECT products.id AS pid, name, producer, creatorId, username 
+            FROM products JOIN users ON (users.id = products.creatorId)
+            WHERE products.id = ?',
+            function ($s) use ($productId) {
+                $s->bind_param('i', $productId);
+            }
+        );
+        $stat->bind_result($id, $name, $producer, $creatorId, $username);
+        if ($stat->fetch()) {
+            $product = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username);
+        }
+        $stat->close();
+        $con->close();
+        return $product;
+    }
     public function getRatingsForProduct(int $productId): array
     {
         $ratings = [];
         $con = $this->getConnection();
         $stat = $this->executeStatement(
             $con,
-            'SELECT ratings.id, creatorId, username, productId, name, creationDate, rating, comment
-             FROM ratings   JOIN users ON (users.id = products.creatorId)
+            'SELECT ratings.id, ratings.creatorId, username, productId, name, creationDate, rating, comment
+             FROM ratings   JOIN users ON (users.id = ratings.creatorId)
                             JOIN products ON (products.id = ratings.productId)
-             WHERE productId = ?',
+             WHERE productId = ?
+             ORDER BY creationDate DESC',
             function ($s) use ($productId) {
                 $s->bind_param('i', $productId);
             }

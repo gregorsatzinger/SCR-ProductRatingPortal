@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Entities;
+namespace Application;
 
-class Rating
+class RatingData
 {
     public function __construct(
         private int $id,
