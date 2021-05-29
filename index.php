@@ -12,6 +12,7 @@ spl_autoload_register(function ($class) {
 
 $sp = new \ServiceProvider();
 // Application
+$sp->register(\Application\RegisterCommand::class);
 $sp->register(\Application\SignInCommand::class);
 $sp->register(\Application\SignedInUserQuery::class);
 $sp->register(\Application\SignOutCommand::class);

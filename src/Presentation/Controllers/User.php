@@ -5,6 +5,7 @@ namespace Presentation\Controllers;
 class User extends \Presentation\MVC\Controller
 {
     public function __construct(
+        private \Application\RegisterCommand $registerCommand,
         private \Application\SignOutCommand $signOutCommand,
         private \Application\SignInCommand $signInCommand,
         private \Application\SignedInUserQuery $signedInUserQuery
@@ -24,13 +25,12 @@ class User extends \Presentation\MVC\Controller
     }
     public function POST_LogIn(): \Presentation\MVC\ActionResult
     {
-
         $ok = $this->signInCommand->execute($this->getParam('un'), $this->getParam('pwd'));
         if(!$ok) {
             return $this->view('login', [
                 'user' => $this->signedInUserQuery->execute(),
                 'userName' => $this->getParam('un'),
-                'errors' => ['Invalid user name or password']
+                'errors' => ['The combination of username and password you have entered is incorrect']
             ]);
         } 
 
@@ -40,5 +40,17 @@ class User extends \Presentation\MVC\Controller
     {
         $this->signOutCommand->execute();
         return $this->redirect('Home', 'Index');
+    }
+    public function POST_Register(): \Presentation\MVC\ActionResult
+    {
+        $ok = $this->registerCommand->execute($this->getParam('un'), $this->getParam('pwd'));
+        if(!$ok) {
+            return $this->view('login', [
+                'user' => $this->signedInUserQuery->execute(),
+                'userName' => $this->getParam('un'),
+                'errors' => ['Username or password does not fullfill our security requirements']
+            ]);
+        }
+        return $this->redirect('Home', 'Index'); 
     }
 }

@@ -17,9 +17,9 @@ class FakeRepository implements
     {
         // create mock data
         $this->mockUsers = array(
-            array(1, 'admin', 'a'),
-            array(2, 'user2', 'u'),
-            array(3, 'user3', 'u')
+            array(1, 'admin', password_hash('a', PASSWORD_DEFAULT)),
+            array(2, 'user2', password_hash('u', PASSWORD_DEFAULT)),
+            array(3, 'user3', password_hash('u', PASSWORD_DEFAULT))
         );
 
         $this->mockProducts = array(
@@ -47,12 +47,26 @@ class FakeRepository implements
     public function getUserForUserNameAndPassword(string $userName, string $password): ?User
     {
         foreach ($this->mockUsers as $u) {
-            if ($u[1] === $userName && $u[2] === $password) {
+            if ($u[1] === $userName && password_verify($password, $u[2])) {
                 return new \Application\Entities\User($u[0], $u[1]);
             }
         }
         return null;
     }
+    public function createUser(string $userName, string $password): ?User
+    {
+        $id = 0;
+        //check if user does exist
+        foreach ($this->mockUsers as $u) {
+            if ($u[1] === $userName) {
+                return null;
+            }
+            $id = $u[0];
+        }
+        $this->mockUsers[] = array($id + 1, $userName, password_hash($password, PASSWORD_DEFAULT));
+        return $this->getUserForUserNameAndPassword($userName, $password);
+    }
+
     public function getProducts(): array
     {
         $res = [];
