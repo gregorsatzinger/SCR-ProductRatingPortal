@@ -8,7 +8,7 @@ class ProductData
         private int $id,
         private string $name,
         private string $producer,
-        private int $creatorId,
+        private string $creatorName,
     ) {
     }
     public function getId(): int
@@ -23,8 +23,8 @@ class ProductData
     {
         return $this->producer;
     }
-    public function getCreatorId(): int
+    public function getCreatorName(): string
     {
-        return $this->creatorId;
+        return $this->creatorName;
     }
 }

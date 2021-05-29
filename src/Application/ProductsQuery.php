@@ -12,7 +12,7 @@ class ProductsQuery
     {
         $res = [];
         foreach ($this->productRepository->getProducts() as $p) {
-            $res[] = new ProductData($p->getId(), $p->getName(), $p->getProducer(), $p->getCreatorId());
+            $res[] = new ProductData($p->getId(), $p->getName(), $p->getProducer(), $p->getCreatorName());
         }
         return $res;
     }

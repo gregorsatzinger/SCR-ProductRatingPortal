@@ -48,7 +48,7 @@ class User extends \Presentation\MVC\Controller
             return $this->view('login', [
                 'user' => $this->signedInUserQuery->execute(),
                 'userName' => $this->getParam('un'),
-                'errors' => ['Username or password does not fullfill our security requirements']
+                'errors' => ['Username is not available']
             ]);
         }
         return $this->redirect('Home', 'Index'); 

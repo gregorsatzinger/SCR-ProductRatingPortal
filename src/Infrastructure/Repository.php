@@ -115,7 +115,21 @@ class Repository implements
 
     public function getProducts(): array
     {
-        return [];
+        $products = [];
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'SELECT products.id, name, producer, creatorId, username 
+            FROM products JOIN users ON (users.id = products.creatorId)',
+            function () {}
+        );
+        $stat->bind_result($id, $name, $producer, $creatorId, $username);
+        while ($stat->fetch()) {
+            $products[] = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username);
+        }
+        $stat->close();
+        $con->close();
+        return $products;
     }
     public function getRatingsForProduct(int $productId): array
     {

@@ -1,5 +1,5 @@
 <?php
-
+//NOT USED
 namespace Infrastructure;
 
 use Application\Entities\User;

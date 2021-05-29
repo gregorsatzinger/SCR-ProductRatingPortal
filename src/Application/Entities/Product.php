@@ -9,6 +9,7 @@ class Product
         private string $name,
         private string $producer,
         private int $creatorId,
+        private string $creatorName,
     ) {
     }
     public function getId(): int
@@ -26,5 +27,9 @@ class Product
     public function getCreatorId(): int
     {
         return $this->creatorId;
+    }
+    public function getCreatorName(): string
+    {
+        return $this->creatorName;
     }
 }

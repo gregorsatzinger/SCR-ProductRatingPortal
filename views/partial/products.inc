@@ -15,7 +15,7 @@
                         <td><?php $htmlOut($product->getId()); ?></td>
                         <td><?php $htmlOut($product->getName()); ?></td>
                         <td><?php $htmlOut($product->getProducer()); ?></td>
-                        <td><?php $htmlOut($product->getCreatorId()); ?></td>
+                        <td><?php $htmlOut($product->getCreatorName()); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
