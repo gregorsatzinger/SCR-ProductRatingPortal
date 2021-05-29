@@ -6,7 +6,7 @@ class User
 {
     public function __construct(
         private int $id,
-        private string $userName
+        private string $userName,
     ) {
     }
     public function getId(): int

@@ -21,16 +21,21 @@ $sp->register(\Application\ProductsQuery::class);
 $sp->register(\Application\Services\AuthenticationService::class);
 
 // Infrastructure
+
+/*
 $sp->register(\Infrastructure\FakeRepository::class, isSingleton: true);
 $sp->register(\Application\Interfaces\UserRepository::class, \Infrastructure\FakeRepository::class);
 $sp->register(\Application\Interfaces\ProductRepository::class, \Infrastructure\FakeRepository::class);
 $sp->register(\Application\Interfaces\RatingRepository::class, \Infrastructure\FakeRepository::class);
-
-/*
-$sp->register(\Application\Interfaces\Repository::class, function() {
-    return new Repository('localhost', 'root', '', 'bookshop');
-}, isSingleton: true);
 */
+
+
+$sp->register(\Infrastructure\Repository::class, function() {
+    return new Repository('localhost', 'root', '', 'productratingportal');
+}, isSingleton: true);
+$sp->register(\Application\Interfaces\UserRepository::class, \Infrastructure\Repository::class);
+$sp->register(\Application\Interfaces\ProductRepository::class, \Infrastructure\Repository::class);
+$sp->register(\Application\Interfaces\RatingRepository::class, \Infrastructure\Repository::class);
 
 
 $sp->register(\Infrastructure\Session::class, isSingleton: true);

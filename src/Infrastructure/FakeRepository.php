@@ -9,8 +9,8 @@ class FakeRepository implements
     \Application\Interfaces\RatingRepository,
     \Application\Interfaces\ProductRepository
 {
-    private $mockCategories;
-    private $mockBooks;
+    private $mockRatings;
+    private $mockProducts;
     private $mockUsers;
 
     public function __construct()
