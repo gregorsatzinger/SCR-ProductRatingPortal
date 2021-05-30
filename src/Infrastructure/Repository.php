@@ -214,4 +214,43 @@ class Repository implements
         return $ratingsCount;
     }
 
+    public function getProductsForFilter(string $filter): array {
+        $filter = "%$filter%";
+        $products = [];
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'SELECT products.id, name, producer, creatorId, username 
+            FROM products JOIN users ON (users.id = products.creatorId)
+            WHERE name LIKE ? OR producer LIKE ?',
+            function ($s) use ($filter) {
+                $s->bind_param('ss', $filter, $filter);
+            }
+        );
+        $stat->bind_result($id, $name, $producer, $creatorId, $username);
+        while ($stat->fetch()) {
+            $products[] = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username);
+        }
+        $stat->close();
+        $con->close();
+        return $products;
+    }
+
+    public function createRatingForProduct(int $creatorId, int $productId, int $rating, string $comment): ?int {
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'INSERT INTO ratings (creatorId, productId, creationDate, rating, comment) 
+            VALUES (?, ?, CURDATE(), ?, ?)',
+            function ($s) use ($creatorId, $productId, $rating, $comment) {
+                $s->bind_param('iiis', $creatorId, $productId, $rating, $comment);
+            }
+        );
+        $id = $stat->insert_id;
+
+        $con->commit();
+        $con->close();
+        return $id;
+    }
+
 }
