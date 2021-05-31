@@ -236,18 +236,45 @@ class Repository implements
         return $products;
     }
 
-    public function createRatingForProduct(int $creatorId, int $productId, int $rating, string $comment): ?int {
+    public function createOrUpdateRatingForProduct(int $creatorId, int $productId, int $rating, string $comment): ?int {
         $con = $this->getConnection();
+        $con->autocommit(false);
+
+        //check if rating exists
         $stat = $this->executeStatement(
             $con,
-            'INSERT INTO ratings (creatorId, productId, creationDate, rating, comment) 
-            VALUES (?, ?, CURDATE(), ?, ?)',
-            function ($s) use ($creatorId, $productId, $rating, $comment) {
-                $s->bind_param('iiis', $creatorId, $productId, $rating, $comment);
+            'SELECT id
+            FROM ratings 
+            WHERE creatorId = ? AND productId = ? ' ,
+            function ($s) use ($creatorId, $productId) {
+                $s->bind_param('ii', $creatorId, $productId);
             }
         );
-        $id = $stat->insert_id;
+        $stat->bind_result($id);
+        while($stat->fetch());
 
+        //No rating exists -> can create a new one
+        if($id == null) {
+            $stat = $this->executeStatement(
+                $con,
+                'INSERT INTO ratings (creatorId, productId, creationDate, rating, comment) 
+                VALUES (?, ?, CURDATE(), ?, ?)',
+                function ($s) use ($creatorId, $productId, $rating, $comment) {
+                    $s->bind_param('iiis', $creatorId, $productId, $rating, $comment);
+                }
+            );
+            $id = $stat->insert_id;
+        } else { //rating exists and needs to be updated
+            $stat = $this->executeStatement(
+                $con,
+                'UPDATE ratings
+                 SET creationDate = CURDATE(), rating = ?, comment = ?
+                 WHERE id = ?',
+                function ($s) use ($rating, $comment, $id) {
+                    $s->bind_param('isi', $rating, $comment, $id);
+                }
+            );
+        }
         $con->commit();
         $con->close();
         return $id;

@@ -5,7 +5,7 @@ namespace Application;
 class RatingCreationQuery
 {
     const Error_NotAuthenticated = 0x01;
-    const Error_RatingAlreadyExists = 0x02;
+    const Error_DbErrorOccured = 0x02;
     public function __construct(
         private \Application\Interfaces\ProductRepository $productRepository,
         private \Application\Interfaces\RatingRepository $ratingRepository,
@@ -22,10 +22,9 @@ class RatingCreationQuery
         }
 
         if(!$errors) {
-            //try to create new order
-            $rid = $this->ratingRepository->createRatingForProduct($userId, $productId, $rating, $comment);
+            $rid = $this->ratingRepository->createOrUpdateRatingForProduct($userId, $productId, $rating, $comment);
             if($rid === null) {
-                $errors |= self::Error_RatingAlreadyExists;
+                $errors |= self::Error_DbErrorOccured;
             }
         }
         return $errors;

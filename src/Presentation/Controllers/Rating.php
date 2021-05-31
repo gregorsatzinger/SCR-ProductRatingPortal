@@ -19,13 +19,22 @@ class Rating extends Controller {
     public function GET_index(): ViewResult {
         $selectedProductId = $this->getParam('p');
         $selectedProduct = $this->productQuery->execute($selectedProductId);
+        $user = $this->signedInUserQuery->execute();
+        $ratings = $this->ratingsQuery->execute($selectedProductId);
+        $rating = null;
+        foreach($ratings as $r) {
+            if($r->getCreatorName() == $user->getUserName()) {
+                $rating = $r;
+            }
+        }
         return $this->view('ratingList', [
-            'user' => $this->signedInUserQuery->execute(),
+            'user' => $user,
             'product' => $selectedProduct,
-            'ratings' => $this->ratingsQuery->execute($selectedProductId),
+            'ratings' => $ratings,
+            'rating' => $rating
         ]);
     }
-    public function POST_create(): ActionResult {
+    public function POST_send(): ActionResult {
         $rating = $this->getParam('rt');
         $comment = $this->getParam('ct');
         $selectedProductId = $this->getParam('p');
@@ -39,8 +48,8 @@ class Rating extends Controller {
             if($result & \Application\RatingCreationQuery::Error_NotAuthenticated) {
                 $errors[] = "You need to be logged in to create ratings";
             }
-            if($result & \Application\RatingCreationQuery::Error_RatingAlreadyExists) {
-                $errors[] = "Error_InvalidCreditCardNumber";
+            if($result & \Application\RatingCreationQuery::Error_DbErrorOccured) {
+                $errors[] = "Error_DbErrorOccured";
             }
 
 
@@ -51,11 +60,7 @@ class Rating extends Controller {
                 'errors' => $errors
             ]);
         } else {
-            return $this->view('ratingList', [
-                'user' => $this->signedInUserQuery->execute(),
-                'product' => $selectedProduct,
-                'ratings' => $this->ratingsQuery->execute($selectedProductId),
-            ]);
+            return $this->redirect('Rating', 'Index', ['p' => $selectedProductId]); 
         }
     }    
 }
