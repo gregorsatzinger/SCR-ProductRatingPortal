@@ -296,4 +296,18 @@ class Repository implements
         $con->close();
         return $affectedRows;
     }
+    public function createProduct(int $userId, string $productName, string $producerName): ?int {
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'INSERT INTO products (creatorId, name, producer) VALUES (?, ?, ?)',
+            function ($s) use ($userId, $productName, $producerName) {
+                $s->bind_param('iss', $userId, $productName, $producerName);
+            }
+        );
+        $productId = $stat->insert_id;
+        $stat->close();
+        $con->close();
+        return $productId;
+    }
 }

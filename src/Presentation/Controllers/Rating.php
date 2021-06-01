@@ -56,7 +56,9 @@ class Rating extends Controller {
             if($result & \Application\RatingCreationQuery::Error_DbErrorOccured) {
                 $errors[] = "Error_DbErrorOccured";
             }
-
+            if(sizeof($errors) == 0) {
+                $errors[] = 'Something went wrong.';
+            }
 
             return $this->view('ratingList', [
                 'user' => $this->signedInUserQuery->execute(),
@@ -84,7 +86,9 @@ class Rating extends Controller {
             if($result & \Application\RatingCreationQuery::Error_DbErrorOccured) {
                 $errors[] = "Error_DbErrorOccured";
             }
-
+            if(sizeof($errors) == 0) {
+                $errors[] = 'Something went wrong.';
+            }
 
             return $this->view('ratingList', [
                 'user' => $this->signedInUserQuery->execute(),

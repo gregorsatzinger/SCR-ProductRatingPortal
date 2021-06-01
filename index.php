@@ -19,6 +19,7 @@ $sp->register(\Application\RegisterCommand::class);
 $sp->register(\Application\SignInCommand::class);
 $sp->register(\Application\SignedInUserQuery::class);
 $sp->register(\Application\SignOutCommand::class);
+$sp->register(\Application\ProductCreateQuery::class);
 $sp->register(\Application\ProductsQuery::class);
 $sp->register(\Application\ProductSearchQuery::class);
 $sp->register(\Application\ProductQuery::class);
