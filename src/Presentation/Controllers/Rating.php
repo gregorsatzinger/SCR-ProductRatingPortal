@@ -11,7 +11,8 @@ class Rating extends Controller {
         private \Application\SignedInUserQuery $signedInUserQuery,
         private \Application\RatingsQuery $ratingsQuery,
         private \Application\ProductQuery $productQuery,
-        private \Application\RatingCreationQuery $ratingCreationQuery
+        private \Application\RatingCreationQuery $ratingCreationQuery,
+        private \Application\RatingDeleteQuery $ratingDeleteQuery
     )
     {
         
@@ -22,11 +23,15 @@ class Rating extends Controller {
         $user = $this->signedInUserQuery->execute();
         $ratings = $this->ratingsQuery->execute($selectedProductId);
         $rating = null;
-        foreach($ratings as $r) {
-            if($r->getCreatorName() == $user->getUserName()) {
-                $rating = $r;
+
+        if($user !== null) {
+            foreach($ratings as $r) {
+                if($r->getCreatorName() == $user->getUserName()) {
+                    $rating = $r;
+                }
             }
         }
+
         return $this->view('ratingList', [
             'user' => $user,
             'product' => $selectedProduct,
@@ -53,7 +58,35 @@ class Rating extends Controller {
             }
 
 
-            return $this->view('orderForm', [
+            return $this->view('ratingList', [
+                'user' => $this->signedInUserQuery->execute(),
+                'product' => $selectedProduct,
+                'ratings' => $this->ratingsQuery->execute($selectedProductId),
+                'errors' => $errors
+            ]);
+        } else {
+            return $this->redirect('Rating', 'Index', ['p' => $selectedProductId]); 
+        }
+    }    
+    public function POST_delete(): ActionResult {
+
+        $selectedProductId = $this->getParam('p');
+        $selectedProduct = $this->productQuery->execute($selectedProductId);
+        
+        $result = $this->ratingDeleteQuery->execute($selectedProductId);
+        
+        //error occured
+        if($result != 0) {
+            $errors = [];
+            if($result & \Application\RatingCreationQuery::Error_NotAuthenticated) {
+                $errors[] = "You need to be logged in to create ratings";
+            }
+            if($result & \Application\RatingCreationQuery::Error_DbErrorOccured) {
+                $errors[] = "Error_DbErrorOccured";
+            }
+
+
+            return $this->view('ratingList', [
                 'user' => $this->signedInUserQuery->execute(),
                 'product' => $selectedProduct,
                 'ratings' => $this->ratingsQuery->execute($selectedProductId),

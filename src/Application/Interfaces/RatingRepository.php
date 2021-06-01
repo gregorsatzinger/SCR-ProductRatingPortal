@@ -8,4 +8,5 @@ interface RatingRepository
     public function getAvgRatingForProduct(int $productId): float; 
     public function getCountOfRatingsForProduct(int $productId): int; 
     public function createOrUpdateRatingForProduct(int $creatorId, int $productId, int $rating, string $comment): ?int; 
+    public function deleteRatingForProduct(int $creatorId, int $productId): ?int; 
 }

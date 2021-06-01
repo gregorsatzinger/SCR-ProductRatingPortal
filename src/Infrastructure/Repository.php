@@ -279,5 +279,21 @@ class Repository implements
         $con->close();
         return $id;
     }
+    public function deleteRatingForProduct(int $creatorId, int $productId): ?int {
+        $con = $this->getConnection();
 
+        //check if rating exists
+        $stat = $this->executeStatement(
+            $con,
+            'DELETE             
+            FROM ratings 
+            WHERE creatorId = ? AND productId = ?' ,
+            function ($s) use ($creatorId, $productId) {
+                $s->bind_param('ii', $creatorId, $productId);
+            }
+        );
+        $affectedRows = $con->affected_rows;
+        $con->close();
+        return $affectedRows;
+    }
 }

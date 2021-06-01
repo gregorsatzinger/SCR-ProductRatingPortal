@@ -13,6 +13,7 @@ spl_autoload_register(function ($class) {
 $sp = new \ServiceProvider();
 // Application
 $sp->register(\Application\RatingCreationQuery::class);
+$sp->register(\Application\RatingDeleteQuery::class);
 $sp->register(\Application\RatingsQuery::class);
 $sp->register(\Application\RegisterCommand::class);
 $sp->register(\Application\SignInCommand::class);

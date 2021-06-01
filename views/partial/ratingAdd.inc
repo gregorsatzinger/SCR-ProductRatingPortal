@@ -1,9 +1,9 @@
 <?php if ($data['product'] !== null && $data['ratings'] !== null && $data['user'] !== null) { ?>
 
-<?php $beginForm('Rating', 'Send', ['p' => $data['product']->getId()], method: 'post'); ?>
 <div class="container border p-4">
     <h2>Your rating: </h2>
-    <div class="row pb-4">
+    <?php $beginForm('Rating', 'Send', ['p' => $data['product']->getId()], method: 'post'); ?>
+    <div class="row">
         <div class="col-1">
         <label for="rating" class="form-label">Rating</label>
         <select class="form-control" name="rt" id="rating" value="3">
@@ -19,13 +19,26 @@
         <textarea class="form-control" id="comment" name="ct" value="" rows="5"><?php if($data['rating']) $htmlOut($data['rating']->getComment())?></textarea>
         </div>
     </div>
-
-    <button class="btn btn-warning">Send</button>
-    
-    <label for="date">Last update:</label>
-    <input type="text" type="date" id="date" value="<?php if($data['rating']) $htmlOut($data['rating']->getDate()) ?>" disabled>
+    <div class="row">
+        <div class="col-2">
+            <label for="date">Last update:</label>
+            <input type="text" type="date" id="date" value="<?php if($data['rating']) $htmlOut($data['rating']->getDate()) ?>" disabled>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-1">
+            <button class="btn btn-warning">Send</button>
+        </div>
+        <div class="col-1">
+            <?php $endForm(); ?>
+            <?php if($data['rating'] !== null) { ?>
+                <?php $beginForm('Rating', 'Delete', ['p' => $data['product']->getId()], method: 'post'); ?>
+                <button class="btn btn-danger">Delete</button>
+                <?php $endForm(); ?>
+            <?php } ?>
+        </div>
+    </div>
 </div>
   
-<?php $endForm(); ?>
     
 <?php } ?>
