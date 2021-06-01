@@ -1,8 +1,12 @@
 <?php $render('partial/header', $data); ?>
 
 <div class="container border p-4">
-    <h1>Create new Products</h1>
-    <?php $beginForm('Product', 'create', method: 'post'); ?>
+    <?php if($data['productName'] == '') { ?>
+        <h1>Create new Products</h1>
+    <?php } else { ?>
+        <h1>Edit Products</h1>
+    <?php } ?>
+    <?php $beginForm('Product', 'Send', ['p' => $data['productId']], method: 'post'); ?>
     <div class="row">
         <div class="col-8">
             <label for="name">Product Name:</label>

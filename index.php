@@ -19,7 +19,7 @@ $sp->register(\Application\RegisterCommand::class);
 $sp->register(\Application\SignInCommand::class);
 $sp->register(\Application\SignedInUserQuery::class);
 $sp->register(\Application\SignOutCommand::class);
-$sp->register(\Application\ProductCreateQuery::class);
+$sp->register(\Application\ProductCreationQuery::class);
 $sp->register(\Application\ProductsQuery::class);
 $sp->register(\Application\ProductSearchQuery::class);
 $sp->register(\Application\ProductQuery::class);
@@ -27,14 +27,6 @@ $sp->register(\Application\ProductQuery::class);
 $sp->register(\Application\Services\AuthenticationService::class);
 
 // Infrastructure
-
-/*
-$sp->register(\Infrastructure\FakeRepository::class, isSingleton: true);
-$sp->register(\Application\Interfaces\UserRepository::class, \Infrastructure\FakeRepository::class);
-$sp->register(\Application\Interfaces\ProductRepository::class, \Infrastructure\FakeRepository::class);
-$sp->register(\Application\Interfaces\RatingRepository::class, \Infrastructure\FakeRepository::class);
-*/
-
 
 $sp->register(\Infrastructure\Repository::class, function() {
     return new Repository('localhost', 'root', '', 'productratingportal');

@@ -4,7 +4,7 @@
     <?php $link('Login', 'User', 'LogIn', cssClass: 'btn btn-warning'); ?>
   </nav>
 <?php else: ?>
-  <?php $link('New Product', 'Product', 'Create', cssClass: 'nav-link'); ?>
+  <?php $link('New Product', 'Product', 'Edit', cssClass: 'nav-link'); ?>
   </nav>
 
   <?php $beginForm('User', 'LogOut', method: 'post', cssClass: 'form-inline'); ?>

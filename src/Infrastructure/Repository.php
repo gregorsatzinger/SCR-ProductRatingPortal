@@ -121,7 +121,8 @@ class Repository implements
             $con,
             'SELECT products.id, name, producer, creatorId, username 
             FROM products JOIN users ON (users.id = products.creatorId)',
-            function () {}
+            function () {
+            }
         );
         $stat->bind_result($id, $name, $producer, $creatorId, $username);
         while ($stat->fetch()) {
@@ -131,7 +132,8 @@ class Repository implements
         $con->close();
         return $products;
     }
-    public function getProductById(int $productId): ?\Application\Entities\Product {
+    public function getProductById(int $productId): ?\Application\Entities\Product
+    {
         $product = null;
         $con = $this->getConnection();
         $stat = $this->executeStatement(
@@ -174,7 +176,8 @@ class Repository implements
         $con->close();
         return $ratings;
     }
-    public function getAvgRatingForProduct(int $productId): float {
+    public function getAvgRatingForProduct(int $productId): float
+    {
         $ratingsAvg = 0;
         $con = $this->getConnection();
         $stat = $this->executeStatement(
@@ -194,7 +197,8 @@ class Repository implements
         $con->close();
         return $ratingsAvg ?? 0;
     }
-    public function getCountOfRatingsForProduct(int $productId): int {
+    public function getCountOfRatingsForProduct(int $productId): int
+    {
         $ratingsCount = 0;
         $con = $this->getConnection();
         $stat = $this->executeStatement(
@@ -214,7 +218,8 @@ class Repository implements
         return $ratingsCount;
     }
 
-    public function getProductsForFilter(string $filter): array {
+    public function getProductsForFilter(string $filter): array
+    {
         $filter = "%$filter%";
         $products = [];
         $con = $this->getConnection();
@@ -236,7 +241,8 @@ class Repository implements
         return $products;
     }
 
-    public function createOrUpdateRatingForProduct(int $creatorId, int $productId, int $rating, string $comment): ?int {
+    public function createOrUpdateRatingForProduct(int $creatorId, int $productId, int $rating, string $comment): ?int
+    {
         $con = $this->getConnection();
         $con->autocommit(false);
 
@@ -245,16 +251,16 @@ class Repository implements
             $con,
             'SELECT id
             FROM ratings 
-            WHERE creatorId = ? AND productId = ? ' ,
+            WHERE creatorId = ? AND productId = ? ',
             function ($s) use ($creatorId, $productId) {
                 $s->bind_param('ii', $creatorId, $productId);
             }
         );
         $stat->bind_result($id);
-        while($stat->fetch());
+        while ($stat->fetch());
 
         //No rating exists -> can create a new one
-        if($id == null) {
+        if ($id == null) {
             $stat = $this->executeStatement(
                 $con,
                 'INSERT INTO ratings (creatorId, productId, creationDate, rating, comment) 
@@ -279,7 +285,8 @@ class Repository implements
         $con->close();
         return $id;
     }
-    public function deleteRatingForProduct(int $creatorId, int $productId): ?int {
+    public function deleteRatingForProduct(int $creatorId, int $productId): ?int
+    {
         $con = $this->getConnection();
 
         //check if rating exists
@@ -287,7 +294,7 @@ class Repository implements
             $con,
             'DELETE             
             FROM ratings 
-            WHERE creatorId = ? AND productId = ?' ,
+            WHERE creatorId = ? AND productId = ?',
             function ($s) use ($creatorId, $productId) {
                 $s->bind_param('ii', $creatorId, $productId);
             }
@@ -296,7 +303,8 @@ class Repository implements
         $con->close();
         return $affectedRows;
     }
-    public function createProduct(int $userId, string $productName, string $producerName): ?int {
+    public function createProduct(int $userId, string $productName, string $producerName): ?int
+    {
         $con = $this->getConnection();
         $stat = $this->executeStatement(
             $con,
@@ -309,5 +317,23 @@ class Repository implements
         $stat->close();
         $con->close();
         return $productId;
+    }
+    public function updateProduct(int $userId, int $productId, string $productName, string $producerName): ?int
+    {
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'UPDATE products 
+            SET name = ?, 
+            producer = ?
+            WHERE id = ? AND creatorId = ?',
+            function ($s) use ($productName, $producerName, $productId, $userId) {
+                $s->bind_param('ssii', $productName, $producerName, $productId, $userId);
+            }
+        );
+        $affectedRows = $con->affected_rows;
+        $stat->close();
+        $con->close();
+        return $affectedRows;
     }
 }
