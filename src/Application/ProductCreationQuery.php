@@ -8,13 +8,14 @@ class ProductCreationQuery
     const Error_DbErrorOccured = 0x02;
     const Error_InvalidProductName = 0x04;
     const Error_InvalidProducer = 0x08;
+    const Error_InvalidImage = 0x10;
 
     public function __construct(
         private \Application\Interfaces\ProductRepository $productRepository,
         private \Application\Services\AuthenticationService $authenticationService
     ) {
     }
-    public function execute(?int $productId, string $productName, string $producerName): int
+    public function execute(?int $productId, string $productName, string $producerName, string $image): int
     {
         $errors = 0;
         //check for authenticated user
@@ -31,10 +32,23 @@ class ProductCreationQuery
 
         if(!$errors) {
             $result = null;
-            if($productId === null) {
-                $result = $this->productRepository->createProduct($userId, $productName, $producerName);
+
+            if($productId === null || $productId <= 0) {
+                if(strlen($image) == 0) {
+                    $errors |= self::Error_InvalidImage;
+                    return $errors;
+                }
+
+                $base64 = base64_encode(file_get_contents($image));
+                $result = $this->productRepository->createProduct($userId, $productName, $producerName, $base64);
             } else {
-                $result = $this->productRepository->updateProduct($userId, $productId, $productName, $producerName);
+                $base64 = '';
+                if(strlen($image) !== 0) {
+                    $base64 = base64_encode(file_get_contents($image));
+                    $result = $this->productRepository->updateProduct($userId, $productId, $productName, $producerName, $base64);
+                } else {
+                    $result = $this->productRepository->updateProductWithoutImage($userId, $productId, $productName, $producerName);
+                }
             }
             if($result === null) {
                 $errors |= self::Error_DbErrorOccured;

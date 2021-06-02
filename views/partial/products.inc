@@ -3,7 +3,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th>Image</th>
                     <th>Name</th>
                     <th>Producer</th>
                     <th>Creator</th>
@@ -14,7 +14,8 @@
             <tbody>
                 <?php foreach ($data['products'] as $product) { ?>
                     <tr>
-                        <td><?php $htmlOut($product->getId()); ?></td>
+                        <td><img width="200em" src="data:image/png;base64, <?php $htmlOut($product->getImage()); ?>" 
+                                alt="<?php $htmlOut(substr($product->getName(), 0, 10)) ?>..." /></td>
                         <td>
                             <?php $beginForm('Rating', 'Index', ['p' => $product->getId()], 'get', 'form-inline'); ?>
                             <button class="button-link"><?php $htmlOut($product->getName()); ?></button>

@@ -119,14 +119,14 @@ class Repository implements
         $con = $this->getConnection();
         $stat = $this->executeStatement(
             $con,
-            'SELECT products.id, name, producer, creatorId, username 
+            'SELECT products.id, name, producer, creatorId, username, image
             FROM products JOIN users ON (users.id = products.creatorId)',
             function () {
             }
         );
-        $stat->bind_result($id, $name, $producer, $creatorId, $username);
+        $stat->bind_result($id, $name, $producer, $creatorId, $username, $image);
         while ($stat->fetch()) {
-            $products[] = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username);
+            $products[] = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username, $image);
         }
         $stat->close();
         $con->close();
@@ -138,21 +138,46 @@ class Repository implements
         $con = $this->getConnection();
         $stat = $this->executeStatement(
             $con,
-            'SELECT products.id AS pid, name, producer, creatorId, username 
+            'SELECT products.id AS pid, name, producer, creatorId, username, image
             FROM products JOIN users ON (users.id = products.creatorId)
             WHERE products.id = ?',
             function ($s) use ($productId) {
                 $s->bind_param('i', $productId);
             }
         );
-        $stat->bind_result($id, $name, $producer, $creatorId, $username);
+        $stat->bind_result($id, $name, $producer, $creatorId, $username, $image);
         if ($stat->fetch()) {
-            $product = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username);
+            $product = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username, $image);
         }
         $stat->close();
         $con->close();
         return $product;
     }
+
+    
+    public function getProductsForFilter(string $filter): array
+    {
+        $filter = "%$filter%";
+        $products = [];
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'SELECT products.id, name, producer, creatorId, username,  image
+            FROM products JOIN users ON (users.id = products.creatorId)
+            WHERE name LIKE ? OR producer LIKE ?',
+            function ($s) use ($filter) {
+                $s->bind_param('ss', $filter, $filter);
+            }
+        );
+        $stat->bind_result($id, $name, $producer, $creatorId, $username, $image);
+        while ($stat->fetch()) {
+            $products[] = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username, $image);
+        }
+        $stat->close();
+        $con->close();
+        return $products;
+    }
+
     public function getRatingsForProduct(int $productId): array
     {
         $ratings = [];
@@ -218,29 +243,6 @@ class Repository implements
         return $ratingsCount;
     }
 
-    public function getProductsForFilter(string $filter): array
-    {
-        $filter = "%$filter%";
-        $products = [];
-        $con = $this->getConnection();
-        $stat = $this->executeStatement(
-            $con,
-            'SELECT products.id, name, producer, creatorId, username 
-            FROM products JOIN users ON (users.id = products.creatorId)
-            WHERE name LIKE ? OR producer LIKE ?',
-            function ($s) use ($filter) {
-                $s->bind_param('ss', $filter, $filter);
-            }
-        );
-        $stat->bind_result($id, $name, $producer, $creatorId, $username);
-        while ($stat->fetch()) {
-            $products[] = new \Application\Entities\Product($id, $name, $producer, $creatorId, $username);
-        }
-        $stat->close();
-        $con->close();
-        return $products;
-    }
-
     public function createOrUpdateRatingForProduct(int $creatorId, int $productId, int $rating, string $comment): ?int
     {
         $con = $this->getConnection();
@@ -303,14 +305,14 @@ class Repository implements
         $con->close();
         return $affectedRows;
     }
-    public function createProduct(int $userId, string $productName, string $producerName): ?int
+    public function createProduct(int $userId, string $productName, string $producerName, string $imgBlob): ?int
     {
         $con = $this->getConnection();
         $stat = $this->executeStatement(
             $con,
-            'INSERT INTO products (creatorId, name, producer) VALUES (?, ?, ?)',
-            function ($s) use ($userId, $productName, $producerName) {
-                $s->bind_param('iss', $userId, $productName, $producerName);
+            'INSERT INTO products (creatorId, name, producer, image) VALUES (?, ?, ?, ?)',
+            function ($s) use ($userId, $productName, $producerName, $imgBlob) {
+                $s->bind_param('isss', $userId, $productName, $producerName, $imgBlob);
             }
         );
         $productId = $stat->insert_id;
@@ -318,8 +320,26 @@ class Repository implements
         $con->close();
         return $productId;
     }
-    public function updateProduct(int $userId, int $productId, string $productName, string $producerName): ?int
+    public function updateProduct(int $userId, int $productId, string $productName, string $producerName, string $imgBlob): ?int
     {
+        $con = $this->getConnection();
+        $stat = $this->executeStatement(
+            $con,
+            'UPDATE products 
+            SET name = ?, 
+            producer = ?,
+            image = ?
+            WHERE id = ? AND creatorId = ?',
+            function ($s) use ($productName, $producerName, $imgBlob, $productId, $userId) {
+                $s->bind_param('sssii', $productName, $producerName, $imgBlob, $productId, $userId);
+            }
+        );
+        $affectedRows = $con->affected_rows;
+        $stat->close();
+        $con->close();
+        return $affectedRows;
+    }
+    public function updateProductWithoutImage(int $userId, int $productId, string $productName, string $producerName): ?int {
         $con = $this->getConnection();
         $stat = $this->executeStatement(
             $con,
@@ -334,6 +354,6 @@ class Repository implements
         $affectedRows = $con->affected_rows;
         $stat->close();
         $con->close();
-        return $affectedRows;
+        return $affectedRows;        
     }
 }

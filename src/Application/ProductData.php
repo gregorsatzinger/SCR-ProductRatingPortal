@@ -9,6 +9,7 @@ class ProductData
         private string $name,
         private string $producer,
         private string $creatorName,
+        private string $image,
         private int $ratingCount,
         private float $avgRating
     ) {
@@ -36,5 +37,9 @@ class ProductData
     public function getAvgRating(): float
     {
         return $this->avgRating;
+    }
+    public function getImage(): string
+    {
+        return $this->image;
     }
 }

@@ -17,9 +17,9 @@ final class ViewRenderer
         $htmlOut = function (mixed $value) {
             echo nl2br(htmlentities($value));
         };
-        $beginForm = function (string $controller, string $action, array $params = [], string $method = 'get', ?string $cssClass = null) use ($mvc) {
+        $beginForm = function (string $controller, string $action, array $params = [], string $method = 'get', ?string $cssClass = null, ?string $enctype = 'application/x-www-form-urlencoded') use ($mvc) {
             $cc = $cssClass !== null ? " class=\"$cssClass\"" : '';
-            echo "<form method=\"$method\" action=\"?\"$cc>";
+            echo "<form method=\"$method\" action=\"?\" enctype=\"$enctype\"$cc>";
             foreach ($params as $name => $value) {
                 echo ("<input type=\"hidden\" name=\"$name\" value=\"$value\">");
             }

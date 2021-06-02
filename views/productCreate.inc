@@ -6,7 +6,7 @@
     <?php } else { ?>
         <h1>Edit Products</h1>
     <?php } ?>
-    <?php $beginForm('Product', 'Send', ['p' => $data['productId']], method: 'post'); ?>
+    <?php $beginForm('Product', 'Send', ['p' => $data['productId']], method: 'post', enctype: 'multipart/form-data'); ?>
     <div class="row">
         <div class="col-8">
             <label for="name">Product Name:</label>
@@ -16,6 +16,10 @@
             <label for="producer">Producer:</label>
             <input class="form-control" id="producer" name="pc" value="<?php $htmlOut($data['producerName']); ?>">
         </div>
+    </div>
+    <div class="row mt-2">
+        <label for="img">Image:</label>
+        <input id="img" type="file" name="img"> <br>
     </div>
     <div class="row mt-2">
         <div class="col-1">

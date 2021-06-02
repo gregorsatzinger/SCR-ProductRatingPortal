@@ -10,6 +10,7 @@ class Product
         private string $producer,
         private int $creatorId,
         private string $creatorName,
+        private string $image
     ) {
     }
     public function getId(): int
@@ -31,5 +32,9 @@ class Product
     public function getCreatorName(): string
     {
         return $this->creatorName;
+    }
+    public function getImage(): string
+    {
+        return $this->image;
     }
 }

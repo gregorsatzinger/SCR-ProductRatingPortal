@@ -68,15 +68,24 @@ class Product extends Controller {
     public function POST_send(): ActionResult {
         $productName = $this->getParam('pn');
         $producerName = $this->getParam('pc');
-        $productId = $this->tryGetParam('p', $value) ? $value : null;
+        $productId = $this->tryGetParam('p', $value) ? (int)$value : null;
 
-        $result = $this->productCreationQuery->execute($productId, $productName, $producerName);
+        $result = $this->productCreationQuery->execute($productId, $productName, $producerName, $_FILES['img']['tmp_name']);
 
         //error occured
         if($result != 0) {
             $errors = [];
             if($result & \Application\ProductCreationQuery::Error_NotAuthenticated) {
                 $errors[] = "You need to be logged in to create ratings";
+            }
+            if($result & \Application\ProductCreationQuery::Error_InvalidProductName) {
+                $errors[] = "Enter product name";
+            }
+            if($result & \Application\ProductCreationQuery::Error_InvalidProducer) {
+                $errors[] = "Enter producer";
+            }
+            if($result & \Application\ProductCreationQuery::Error_InvalidImage) {
+                $errors[] = "Select valid image";
             }
             if($result & \Application\ProductCreationQuery::Error_DbErrorOccured) {
                 $errors[] = "Error_DbErrorOccured";
@@ -89,6 +98,7 @@ class Product extends Controller {
                 'user' => $this->signedInUserQuery->execute(),
                 'producerName' => $productName,
                 'productName' => $producerName,
+                'productId' => $productId,
                 'errors' => $errors
             ]);
         } else {

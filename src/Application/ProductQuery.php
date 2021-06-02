@@ -21,6 +21,7 @@ class ProductQuery
             $p->getName(), 
             $p->getProducer(), 
             $p->getCreatorName(),
+            $p->getImage(),
             $this->ratingRepository->getCountOfRatingsForProduct($p->getId()),
             $this->ratingRepository->getAvgRatingForProduct($p->getId())
         );
