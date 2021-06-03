@@ -1,6 +1,6 @@
 <?php if ($data['products'] !== null) { ?>
     <?php if (sizeof($data['products']) > 0) { ?>
-        <table class="table table-hover">
+        <table class="table table-hover mb-5">
             <thead>
                 <tr>
                     <th>Image</th>

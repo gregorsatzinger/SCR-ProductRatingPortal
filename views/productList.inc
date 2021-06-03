@@ -1,6 +1,6 @@
 <?php $render('partial/header', $data); ?>
 
-<h1>List of Products</h1>
+<h1>Explore Products</h1>
 
 <?php $render('partial/products', $data); ?>
 

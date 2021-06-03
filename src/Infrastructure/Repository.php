@@ -97,7 +97,6 @@ class Repository implements
     }
     public function createUser(string $username, string $password): ?User
     {
-        $user = null;
         $con = $this->getConnection();
         $stat = $con->prepare(
             'INSERT INTO users (username, passwordHash)
@@ -107,10 +106,11 @@ class Repository implements
         $stat->bind_param("ss", $username, $passwordHash);
         $stat->execute();
 
+        $newUserCreated = $stat->insert_id != 0;
         $stat->close();
         $con->close();
 
-        return $this->getUserForUserNameAndPassword($username, $password);
+        return $newUserCreated === false ? null : $this->getUserForUserNameAndPassword($username, $password);
     }
 
     public function getProducts(): array

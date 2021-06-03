@@ -8,7 +8,6 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Creator</th>
                     <th>Rating</th>
                     <th>Comment</th>
@@ -18,11 +17,10 @@
             <tbody>
                 <?php foreach ($data['ratings'] as $rating) { ?>
                     <tr>
-                        <td><?php $htmlOut($rating->getId()); ?></td>
-                        <td><?php $htmlOut($rating->getCreatorName()); ?></td>
-                        <td><?php $htmlOut($rating->getRating()); ?></td>
+                        <td class="col-1"><?php $htmlOut($rating->getCreatorName()); ?></td>
+                        <td class="col-1"><?php $htmlOut($rating->getRating()); ?></td>
                         <td><?php $htmlOut($rating->getComment()); ?></td>
-                        <td><?php $htmlOut($rating->getDate()); ?></td>
+                        <td class="col-1"><?php $htmlOut($rating->getDate()); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

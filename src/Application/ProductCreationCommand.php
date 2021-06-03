@@ -2,7 +2,7 @@
 
 namespace Application;
 
-class ProductCreationQuery
+class ProductCreationCommand
 {
     const Error_NotAuthenticated = 0x01;
     const Error_DbErrorOccured = 0x02;

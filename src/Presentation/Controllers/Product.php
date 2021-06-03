@@ -12,7 +12,7 @@ class Product extends Controller {
         private \Application\ProductsQuery $productsQuery,
         private \Application\ProductQuery $productQuery,
         private \Application\ProductSearchQuery $productSearchQuery,
-        private \Application\ProductCreationQuery $productCreationQuery
+        private \Application\ProductCreationCommand $productCreationCommand
     )
     {
         
@@ -70,24 +70,24 @@ class Product extends Controller {
         $producerName = $this->getParam('pc');
         $productId = $this->tryGetParam('p', $value) ? (int)$value : null;
 
-        $result = $this->productCreationQuery->execute($productId, $productName, $producerName, $_FILES['img']['tmp_name']);
+        $result = $this->productCreationCommand->execute($productId, $productName, $producerName, $_FILES['img']['tmp_name']);
 
         //error occured
         if($result != 0) {
             $errors = [];
-            if($result & \Application\ProductCreationQuery::Error_NotAuthenticated) {
+            if($result & \Application\ProductCreationCommand::Error_NotAuthenticated) {
                 $errors[] = "You need to be logged in to create ratings";
             }
-            if($result & \Application\ProductCreationQuery::Error_InvalidProductName) {
+            if($result & \Application\ProductCreationCommand::Error_InvalidProductName) {
                 $errors[] = "Enter product name";
             }
-            if($result & \Application\ProductCreationQuery::Error_InvalidProducer) {
+            if($result & \Application\ProductCreationCommand::Error_InvalidProducer) {
                 $errors[] = "Enter producer";
             }
-            if($result & \Application\ProductCreationQuery::Error_InvalidImage) {
+            if($result & \Application\ProductCreationCommand::Error_InvalidImage) {
                 $errors[] = "Select valid image";
             }
-            if($result & \Application\ProductCreationQuery::Error_DbErrorOccured) {
+            if($result & \Application\ProductCreationCommand::Error_DbErrorOccured) {
                 $errors[] = "Error_DbErrorOccured";
             }
             if(sizeof($errors) == 0) {

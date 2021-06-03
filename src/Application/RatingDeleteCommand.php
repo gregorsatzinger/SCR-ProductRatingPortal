@@ -2,7 +2,7 @@
 
 namespace Application;
 
-class RatingDeleteQuery
+class RatingDeleteCommand
 {
     const Error_NotAuthenticated = 0x01;
     const Error_DbErrorOccured = 0x02;

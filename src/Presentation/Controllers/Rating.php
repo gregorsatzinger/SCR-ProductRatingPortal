@@ -11,8 +11,8 @@ class Rating extends Controller {
         private \Application\SignedInUserQuery $signedInUserQuery,
         private \Application\RatingsQuery $ratingsQuery,
         private \Application\ProductQuery $productQuery,
-        private \Application\RatingCreationQuery $ratingCreationQuery,
-        private \Application\RatingDeleteQuery $ratingDeleteQuery
+        private \Application\RatingCreationCommand $ratingCreationCommand,
+        private \Application\RatingDeleteCommand $ratingDeleteCommand
     )
     {
         
@@ -45,15 +45,15 @@ class Rating extends Controller {
         $selectedProductId = $this->getParam('p');
         $selectedProduct = $this->productQuery->execute($selectedProductId);
         
-        $result = $this->ratingCreationQuery->execute($selectedProductId, $rating, $comment);
+        $result = $this->ratingCreationCommand->execute($selectedProductId, $rating, $comment);
         
         //error occured
         if($result != 0) {
             $errors = [];
-            if($result & \Application\RatingCreationQuery::Error_NotAuthenticated) {
+            if($result & \Application\RatingCreationCommand::Error_NotAuthenticated) {
                 $errors[] = "You need to be logged in to create ratings";
             }
-            if($result & \Application\RatingCreationQuery::Error_DbErrorOccured) {
+            if($result & \Application\RatingCreationCommand::Error_DbErrorOccured) {
                 $errors[] = "Error_DbErrorOccured";
             }
             if(sizeof($errors) == 0) {
@@ -75,15 +75,15 @@ class Rating extends Controller {
         $selectedProductId = $this->getParam('p');
         $selectedProduct = $this->productQuery->execute($selectedProductId);
         
-        $result = $this->ratingDeleteQuery->execute($selectedProductId);
+        $result = $this->ratingDeleteCommand->execute($selectedProductId);
         
         //error occured
         if($result != 0) {
             $errors = [];
-            if($result & \Application\RatingCreationQuery::Error_NotAuthenticated) {
+            if($result & \Application\RatingDeleteCommand::Error_NotAuthenticated) {
                 $errors[] = "You need to be logged in to create ratings";
             }
-            if($result & \Application\RatingCreationQuery::Error_DbErrorOccured) {
+            if($result & \Application\RatingDeleteCommand::Error_DbErrorOccured) {
                 $errors[] = "Error_DbErrorOccured";
             }
             if(sizeof($errors) == 0) {
