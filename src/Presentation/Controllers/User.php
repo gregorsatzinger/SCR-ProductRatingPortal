@@ -43,12 +43,26 @@ class User extends \Presentation\MVC\Controller
     }
     public function POST_Register(): \Presentation\MVC\ActionResult
     {
-        $ok = $this->registerCommand->execute($this->getParam('un'), $this->getParam('pwd'));
-        if(!$ok) {
+        $result = $this->registerCommand->execute($this->getParam('un'), $this->getParam('pwd'));
+        
+        if($result != 0) {
+            $errors = [];
+            if($result & \Application\RegisterCommand::Error_UserNameToShort) {
+                $errors[] = "Username needs to have between 3 and 30 characters";
+            }
+            if($result & \Application\RegisterCommand::Error_InvalidPassword) {
+                $errors[] = "Password needs to have atleast 1 character";
+            }
+            if($result & \Application\RegisterCommand::Error_UserNameUsed) {
+                $errors[] = "Entered username is already used";
+            }
+            if(sizeof($errors) == 0) {
+                $errors[] = 'Something went wrong.';
+            }
             return $this->view('login', [
                 'user' => $this->signedInUserQuery->execute(),
                 'userName' => $this->getParam('un'),
-                'errors' => ['Username is not available']
+                'errors' => $errors
             ]);
         }
         return $this->redirect('Home', 'Index'); 

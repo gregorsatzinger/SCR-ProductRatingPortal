@@ -1,6 +1,6 @@
 <?php if ($data['product'] !== null && $data['ratings'] !== null && $data['user'] !== null) { ?>
 
-<div class="container border p-4">
+<div class="container border p-4 mb-5">
     <h2>Your rating: </h2>
     <?php $beginForm('Rating', 'Send', ['p' => $data['product']->getId()], method: 'post'); ?>
     <div class="row">

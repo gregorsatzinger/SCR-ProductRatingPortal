@@ -6,6 +6,9 @@ class RatingCreationCommand
 {
     const Error_NotAuthenticated = 0x01;
     const Error_DbErrorOccured = 0x02;
+    const Error_InvalidRating = 0x04;
+    const Error_InvalidComment = 0x08;
+
     public function __construct(
         private \Application\Interfaces\ProductRepository $productRepository,
         private \Application\Interfaces\RatingRepository $ratingRepository,
@@ -19,6 +22,12 @@ class RatingCreationCommand
         $userId = $this->authenticationService->getUserId();
         if($userId === null) {
             $errors |= self::Error_NotAuthenticated;
+        }
+        if($rating < 1 || $rating > 5) {
+            $errors |= self::Error_InvalidRating;
+        }
+        if(strlen($comment) > 2000) {
+            $errors |= self::Error_InvalidComment;
         }
 
         if(!$errors) {

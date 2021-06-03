@@ -56,14 +56,34 @@ class Rating extends Controller {
             if($result & \Application\RatingCreationCommand::Error_DbErrorOccured) {
                 $errors[] = "Error_DbErrorOccured";
             }
+            if($result & \Application\RatingCreationCommand::Error_InvalidComment) {
+                $errors[] = "Comment is too long";
+            }
+            if($result & \Application\RatingCreationCommand::Error_InvalidRating) {
+                $errors[] = "Only Ratings from 1 to 5 are valid";
+            }
             if(sizeof($errors) == 0) {
                 $errors[] = 'Something went wrong.';
             }
 
+            $user = $this->signedInUserQuery->execute();
+
+            $ratings = $this->ratingsQuery->execute($selectedProductId);
+            $rating = null;
+
+            if($user !== null) {
+                foreach($ratings as $r) {
+                    if($r->getCreatorName() == $user->getUserName()) {
+                        $rating = $r;
+                    }
+                }
+            }
+
             return $this->view('ratingList', [
-                'user' => $this->signedInUserQuery->execute(),
+                'user' => $user,
                 'product' => $selectedProduct,
                 'ratings' => $this->ratingsQuery->execute($selectedProductId),
+                'rating' => $rating,
                 'errors' => $errors
             ]);
         } else {
